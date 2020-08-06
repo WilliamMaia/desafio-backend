@@ -30,7 +30,7 @@ jobs:
         paths:
           - vendor/bundle
 
-      - run: gem install bundler
+      # - run: gem install bundler
       - run: dockerize -wait tcp://localhost:5432 -timeout 1m
       - run: bundle install
       - run: bundle exec rails db:setup
