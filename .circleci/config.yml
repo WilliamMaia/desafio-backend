@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: circleci/ruby:2.6.3
+      - image: circleci/ruby:2.6.3-node
         environment:
           AGENDA_MAIL_DATABASE_PASSWORD: qwe123
           RAILS_ENV: test
