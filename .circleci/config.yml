@@ -1,61 +1,19 @@
 version: 2.1
-orbs:
-  node: circleci/node@3.0.1
-  ruby: circleci/ruby@1.1.0
 
 jobs:
   build:
     docker:
-      - image: circleci/ruby:2.6.3-node
-    steps:
-      - checkout
-      - ruby/install-deps
-      - node/install-packages:
-          cache-key: yarn.lock
-          pkg-manager: yarn
-  checking:
-    docker:
-      - image: circleci/ruby:2.6.3-node
-    steps:
-      - checkout
-      - ruby/install-deps
-      - ruby/rubocop-check:
-          format: progress
-  test:
-    docker:
-      - image: circleci/ruby:2.6.3-node
-      - environment:
-          POSTGRES_DB: agenda_mail_test
-          POSTGRES_PASSWORD: ''
+      - image: circleci/ruby:2.6.3
+        environment:
+          AGENDA_MAIL_DATABASE_PASSWORD: qwe123
+          RAILS_ENV: test
+      - image: postgres:12
+        environment:
           POSTGRES_USER: agenda_mail
-        image: 'circleci/postgres:12-alpine'
-    environment:
-      BUNDLE_JOBS: '3'
-      BUNDLE_RETRY: '3'
-      PGHOST: 127.0.0.1
-      PGPASSWORD: ''
-      PGUSER: agenda_mail
-      RAILS_ENV: test
-    parallelism: 3
+          POSTGRES_DB: agenda_mail_test
+          POSTGRES_PASSWORD: qwe123
     steps:
       - checkout
-      - ruby/install-deps
-      - node/install-packages:
-          cache-key: yarn.lock
-          pkg-manager: yarn
-      - run:
-          command: 'dockerize -wait tcp://localhost:5432 -timeout 1m'
-          name: Wait for DB
-      - run:
-          command: 'bundle exec rails db:schema:load --trace'
-          name: Database setup
-      - ruby/rspec-test
-
-workflows:
-  build_and_test:
-    jobs:
-      - build
-      - checking
-      - test:
-          requires:
-            - build
+      - run: dockerize -wait tcp://localhost:5432 -timeout 1m
+      - run: bundle install
+      - run: bundle exec rails db:setup
