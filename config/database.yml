@@ -4,7 +4,10 @@ default: &default
   encoding: unicode
   # For details on connection pooling, see rails configuration guide
   # http://guides.rubyonrails.org/configuring.html#database-pooling
+  host: <%= ENV.fetch('AGENDA_MAIL_DATABASE_HOST') { 'localhost' } %>
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  username: agenda_mail
+  password: <%= ENV['AGENDA_MAIL_DATABASE_PASSWORD'] %>
 
 development:
   <<: *default
@@ -13,8 +16,7 @@ development:
 test:
   <<: *default
   database: agenda_mail_test
+
 production:
   <<: *default
   database: agenda_mail_production
-  username: agenda_mail
-  password: <%= ENV['AGENDA_MAIL_DATABASE_PASSWORD'] %>
