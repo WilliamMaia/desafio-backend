@@ -1,0 +1,28 @@
+# this file should be at root of rails project
+version: "3.4"
+services:
+  app:
+    build:
+      context: ./
+      dockerfile: ./rails.dockerfile
+    working_dir: /app
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+    env_file:
+      - app.env
+    ports:
+      - 80:3000
+    command:
+      - /bin/sh
+      - -c
+      - |
+        bundler install
+        bundler exec puma
+    tty: true
+  db:
+    image: postgres:12
+    environment:
+      - POSTGRES_USER=agenda_mail
+      - POSTGRES_PASSWORD=qwe123
