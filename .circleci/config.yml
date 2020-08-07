@@ -1,0 +1,19 @@
+version: 2.1
+
+jobs:
+  build:
+    docker:
+      - image: circleci/ruby:2.6.3-node
+        environment:
+          AGENDA_MAIL_DATABASE_PASSWORD: qwe123
+          RAILS_ENV: test
+      - image: postgres:12
+        environment:
+          POSTGRES_USER: agenda_mail
+          POSTGRES_PASSWORD: qwe123
+    steps:
+      - checkout
+      - run: gem install bundler
+      - run: dockerize -wait tcp://localhost:5432 -timeout 1m
+      - run: bundle install
+      - run: bundle exec rails db:setup
